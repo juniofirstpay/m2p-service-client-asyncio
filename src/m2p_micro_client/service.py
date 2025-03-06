@@ -5,6 +5,11 @@ from contextvars import ContextVar
 import urllib
 from uuid import UUID
 
+# Fix these 2
+headers = {}
+timeout = 10
+
+
 base_url_create_account_holder = "account-holder/create"
 base_url_get_account_holder = "account-holder/{account_holder_id}"
 base_url_get_account_holder_type = "account-holder/vector/{type}/{value}"
@@ -58,7 +63,6 @@ base_url_create_phone_number = (
 base_url_delete_phone_number = (
     "account/{account_id}/payment-instrument/phone-number/delete"
 )
-
 base_url_create_card = "account/{account_id}/payment-instrument/card/create"
 base_url_delete_card = "account/{account_id}/payment-instrument/card/delete"
 
