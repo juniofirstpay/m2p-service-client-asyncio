@@ -1,0 +1,8 @@
+pyproject.toml
+src/m2p_micro_client/__init__.py
+src/m2p_micro_client/asyncio.py
+src/m2p_micro_client/asyncio_v2.py
+src/m2p_micro_client.egg-info/PKG-INFO
+src/m2p_micro_client.egg-info/SOURCES.txt
+src/m2p_micro_client.egg-info/dependency_links.txt
+src/m2p_micro_client.egg-info/top_level.txt
