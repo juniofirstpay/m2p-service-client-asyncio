@@ -165,7 +165,7 @@ async def process_response(response: aiohttp.ClientResponse):
 async def create_account_holder(*args, **kwargs):
     client_session = m2p_client_session.get()
     async with client_session.post(
-        base_url_create_account_holder, headers=headers, json=kwargs
+        base_url_create_account_holder, headers=kwargs.get("headers", {}), json=kwargs
     ) as response:
         return await process_response(response)
 
@@ -173,27 +173,27 @@ async def create_account_holder(*args, **kwargs):
     #     url=base_url_create_account_holder,
     #     headers=base_headers,
     #     json=kwargs,
-    #     timeout=timeout,
+    #     timeout=kwargs.get("timeout",10),
     # )
     # return process_response(response)
 
 
-async def get_account_holder(type, value):
+async def get_account_holder(type, value, kwargs: dict = {}):
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_account_holder_type.format(type=type, value=value),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_account_holder_via_id(ach_id: str):
+async def get_account_holder_via_id(ach_id: str, kwargs: dict = {}):
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_account_holder.format(account_holder_id=ach_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
     # response = request.get(
@@ -202,33 +202,33 @@ async def get_account_holder_via_id(ach_id: str):
     #         base_url_get_account_holder.format(account_holder_id=ach_id),
     #     ),
     #     headers=base_headers,
-    #     timeout=timeout,
+    #     timeout=kwargs.get("timeout",10),
     # )
     # return process_response(response)
 
 
-async def get_accounts(account_holder_id: str) -> List[Dict]:
+async def get_accounts(account_holder_id: str, kwargs: dict = {}) -> List[Dict]:
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_account_holder_type.format(account_holder_id=account_holder_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_account(account_id: str) -> List[Dict]:
+async def get_account(account_id: str, kwargs: dict = {}) -> List[Dict]:
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_accounts.format(account_id=account_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
     # response = request.get(
     #     url=urljoin(base_url, base_url_get_account.format(account_id=account_id)),
     #     headers=base_headers,
-    #     timeout=timeout,
+    #     timeout=kwargs.get("timeout",10),
     # )
     # return process_response(response)
 
@@ -238,9 +238,9 @@ async def create_account(*args, **kwargs) -> Dict:
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_create_account,
-        headers=headers,
+        headers=kwargs.get("headers", {}),
         json=kwargs,
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -249,8 +249,8 @@ async def get_resources(account_holder_id: str, *args, **kwargs) -> List[Dict]:
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_resources.format(account_holder_id=account_holder_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -261,8 +261,8 @@ async def get_resource_via_account_id(
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_resource_via_account_id.format(account_id=account_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -271,8 +271,8 @@ async def get_resource(resource_id: str, *args, **kwargs) -> Tuple[Optional[int]
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_resource.format(resource_id=resource_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
     # response = request.get(
@@ -281,7 +281,7 @@ async def get_resource(resource_id: str, *args, **kwargs) -> Tuple[Optional[int]
     #         base_url_get_resource.format(resource_id=resource_id),
     #     ),
     #     headers=base_headers,
-    #     timeout=timeout,
+    #     timeout=kwargs.get("timeout",10),
     # )
     # return process_response(response)
 
@@ -291,15 +291,15 @@ async def create_resource(*args, **kwargs) -> Dict:
     async with client_session.post(
         base_url_create_resource,
         json=kwargs,
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
     # response = request.post(
     #     url=urljoin(base_url, base_url_create_resource),
     #     headers=base_headers,
     #     json=kwargs,
-    #     timeout=timeout,
+    #     timeout=kwargs.get("timeout",10),
     # )
     # return process_response(response)
 
@@ -320,9 +320,9 @@ async def update_resource_status(resource_id: str, *args, **kwargs) -> Dict:
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_resource_id_status.format(resource_id=resource_id),
-        headers=headers,
+        headers=kwargs.get("headers", {}),
         json=kwargs,
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -331,9 +331,9 @@ async def delete_resource_status(resource_id: str, *args, **kwargs) -> Dict:
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_resource_id_delete.format(resource_id=resource_id),
-        headers=headers,
+        headers=kwargs.get("headers", {}),
         json=kwargs,
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -344,8 +344,8 @@ async def update_form_factor(resource_id: str, form_factor_id: str, **kwargs) ->
         base_url_form_factor_id.format(
             resource_id=resource_id, form_factor_id=form_factor_id
         ),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -354,9 +354,9 @@ async def update_account(account_id: str, **kwargs) -> Dict:
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_update_account.format(account_id=account_id),
-        headers=headers,
+        headers=kwargs.get("headers", {}),
         json=kwargs,
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -365,9 +365,9 @@ async def account_debit(**kwargs) -> Dict:
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_account_debit,
-        headers=headers,
+        headers=kwargs.get("headers", {}),
         json=kwargs,
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -376,9 +376,9 @@ async def account_purchase(**kwargs) -> Dict:
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_account_purchase,
-        headers=headers,
+        headers=kwargs.get("headers", {}),
         json=kwargs,
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -387,9 +387,9 @@ async def account_fee(**kwargs) -> Dict:
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_account_fee,
-        headers=headers,
+        headers=kwargs.get("headers", {}),
         json=kwargs,
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -398,9 +398,9 @@ async def account_credit(**kwargs) -> Dict:
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_account_credit,
-        headers=headers,
+        headers=kwargs.get("headers", {}),
         json=kwargs,
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -409,9 +409,9 @@ async def account_transfer(**kwargs) -> Dict:
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_account_intra_transfer,
-        headers=headers,
+        headers=kwargs.get("headers", {}),
         json=kwargs,
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -420,9 +420,9 @@ async def account_wallet_transfer(**kwargs) -> Dict:
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_account_wallet_transfer,
-        headers=headers,
+        headers=kwargs.get("headers", {}),
         json=kwargs,
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -431,9 +431,9 @@ async def account_inter_transfer(**kwargs) -> Dict:
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_account_inter_transfer,
-        headers=headers,
+        headers=kwargs.get("headers", {}),
         json=kwargs,
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -442,9 +442,9 @@ async def reverse_txn(**kwargs) -> Tuple[Optional[int], Dict]:
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_txn_reversal.format(txn_id=kwargs.get("txn_id")),
-        headers=headers,
+        headers=kwargs.get("headers", {}),
         json=kwargs,
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -453,8 +453,8 @@ async def get_txn(**kwargs) -> Tuple[Optional[int], Dict]:
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_txn_get.format(txn_id=kwargs.get("txn_id")),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -463,18 +463,20 @@ async def get_balance(**kwargs) -> Tuple[Optional[int], Dict]:
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_account_balance.format(account_id=kwargs.get("account_id")),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_funding_account_balance() -> "Tuple[Optional[int], Dict]":
+async def get_funding_account_balance(
+    kwargs: dict = {},
+) -> "Tuple[Optional[int], Dict]":
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_funding_account_balance,
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -483,8 +485,8 @@ async def get_credit_limit(**kwargs) -> Tuple[Optional[int], Dict]:
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_account_credit_limit.format(account_id=kwargs.get("account_id")),
-        headers={**headers, "X-API_VERSION": "v1"},
-        timeout=timeout,
+        headers={**kwargs.get("headers", {}), "X-API_VERSION": "v1"},
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -493,8 +495,8 @@ async def get_debit_limit(**kwargs) -> Tuple[Optional[int], Dict]:
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_account_debit_limit.format(account_id=kwargs.get("account_id")),
-        headers={**headers, "X-API-VERSION": "v1"},
-        timeout=timeout,
+        headers={**kwargs.get("headers", {}), "X-API-VERSION": "v1"},
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -503,8 +505,8 @@ async def get_balance_accounts(**kwargs) -> Tuple[Optional[int], Dict]:
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_accounts.format(account_holder_id=kwargs.get("account_holder_id")),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -515,8 +517,8 @@ async def get_account_holder_token(**kwargs) -> Tuple[Optional[int], Dict]:
         base_url_get_account_holder_token.format(
             account_holder_id=kwargs.get("account_holder_id")
         ),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -527,8 +529,8 @@ async def get_account_holder_kyc_token(**kwargs) -> Tuple[Optional[int], Dict]:
         base_url_get_account_holder_kyc_token.format(
             account_holder_id=kwargs.get("account_holder_id")
         ),
-        # headers=headers,
-        timeout=timeout,
+        # headers=kwargs.get("headers",{}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -539,7 +541,7 @@ async def process_account_holder_kyc_upgrade(**kwargs):
         base_url_account_holder_kyc_upgrade.format(
             account_holder_id=kwargs.get("account_holder_id")
         ),
-        # headers=headers,
+        # headers=kwargs.get("headers",{}),
         timeout=10,
     ) as response:
         return await process_response(response)
@@ -551,8 +553,8 @@ async def get_account_holder_kyc_status(**kwargs) -> Tuple[Optional[int], Dict]:
         base_url_get_account_holder_kyc_status.format(
             account_id=kwargs.get("account_holder_id")
         ),
-        # headers=headers,
-        timeout=timeout,
+        # headers=kwargs.get("headers",{}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
     # response = request.get(
@@ -562,7 +564,7 @@ async def get_account_holder_kyc_status(**kwargs) -> Tuple[Optional[int], Dict]:
     #             account_holder_id=kwargs.get("account_holder_id")
     #         ),
     #     ),
-    #     timeout=timeout,
+    #     timeout=kwargs.get("timeout",10),
     # )
     # return process_response(response)
 
@@ -571,51 +573,55 @@ async def fetch_resource_transactions(**kwargs) -> Tuple[Optional[int], Dict]:
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_txns.format(resource_id=kwargs.get("resource_id")),
-        # headers=headers,
-        timeout=timeout,
+        # headers=kwargs.get("headers",{}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def create_phone_number(account_id, phone_number) -> Tuple[Optional[int], Dict]:
+async def create_phone_number(
+    account_id, phone_number, kwargs: dict = {}
+) -> Tuple[Optional[int], Dict]:
     req_body = {"phone_number": phone_number}
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_create_phone_number.format(account_holder_id=account_id),
         json=req_body,
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def delete_phone_number(account_id) -> Tuple[Optional[int], Dict]:
+async def delete_phone_number(
+    account_id, kwargs: dict = {}
+) -> Tuple[Optional[int], Dict]:
     req_body = {}
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_delete_phone_number.format(account_holder_id=account_id),
         json=req_body,
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
 async def get_account_transactions(
-    account_id: str, params: Optional[Dict] = None
+    account_id: str, params: Optional[Dict] = None, kwargs: dict = {}
 ) -> Tuple[Optional[int], Union[List, Dict]]:
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_account_transactions.format(account_id=account_id),
         params=params,
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
 async def get_account_transactions_v2(
-    account_id: str, params: Optional[Dict] = None
+    account_id: str, params: Optional[Dict] = None, kwargs: dict = {}
 ) -> Tuple[Optional[int], Union[List, Dict]]:
     client_session = m2p_client_session.get()
     if params:
@@ -626,14 +632,14 @@ async def get_account_transactions_v2(
         )
     async with client_session.get(
         url,
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
 async def get_person_account_transactions(
-    person_id: str, params: Optional[Dict] = None
+    person_id: str, params: Optional[Dict] = None, **kwargs
 ) -> Tuple[Optional[int], Union[List, Dict]]:
     # url = urljoin(
     #     base_url,
@@ -645,87 +651,87 @@ async def get_person_account_transactions(
     client_session = m2p_client_session.get()
     async with client_session.get(
         url,
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def create_card(account_id) -> Tuple[Optional[int], Dict]:
+async def create_card(account_id, **kwargs) -> Tuple[Optional[int], Dict]:
     client_session = m2p_client_session.get()
     async with client_session.post(
         url=base_url_create_card.format(account_id=account_id),
         json={},
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def delete_card(account_id) -> Tuple[Optional[int], Dict]:
+async def delete_card(account_id, **kwargs) -> Tuple[Optional[int], Dict]:
     client_session = m2p_client_session.get()
     req_body = {}
     async with client_session.get(
         base_url_delete_card.format(account_id=account_id),
         json=req_body,
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_card(card_id: str) -> Tuple[Optional[int], Dict]:
+async def get_card(card_id: str, **kwargs) -> Tuple[Optional[int], Dict]:
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_card.format(card_id=card_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_card_view(card_id: str) -> Tuple[Optional[int], Dict]:
+async def get_card_view(card_id: str, **kwargs) -> Tuple[Optional[int], Dict]:
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_card.format(card_id=card_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_card_view(card_id: str) -> Tuple[Optional[int], Dict]:
+async def get_card_view(card_id: str, **kwargs) -> Tuple[Optional[int], Dict]:
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_card_view + f"?card_id={card_id}",
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_card_set_pin(card_id: str) -> Tuple[Optional[int], Dict]:
+async def get_card_set_pin(card_id: str, **kwargs) -> Tuple[Optional[int], Dict]:
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_card_set_pin + f"?card_id={card_id}",
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_card_status(card_id) -> Tuple[Optional[int], Dict]:
+async def get_card_status(card_id, **kwargs) -> Tuple[Optional[int], Dict]:
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_card_status.format(card_id=card_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
 async def update_card_status(
-    card_id, status, reason=None
+    card_id, status, reason=None, **kwargs
 ) -> Tuple[Optional[int], Dict]:
     client_session = m2p_client_session.get()
     req_body = {
@@ -736,94 +742,98 @@ async def update_card_status(
     async with client_session.get(
         base_url_update_card_status.format(card_id=card_id),
         json=req_body,
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def fetch_txn_limit(account_id: str) -> Tuple[Optional[int], Dict]:
+async def fetch_txn_limit(account_id: str, **kwargs) -> Tuple[Optional[int], Dict]:
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_fetch_txn_limit.format(account_id=account_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_person_account_holder(person_id: "UUID"):
+async def get_person_account_holder(person_id: "UUID", **kwargs):
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_person_account_holder.format(person_id=person_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_person_account(person_id: "UUID"):
+async def get_person_account(person_id: "UUID", **kwargs):
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_person_account.format(person_id=person_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_person_account_details(person_id: "UUID", account_id: str = None):
+async def get_person_account_details(
+    person_id: "UUID", account_id: str = None, **kwargs
+):
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_person_account_details.format(person_id=person_id),
         params={"account_id": account_id},
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_person_bundle(person_id: "UUID"):
+async def get_person_bundle(person_id: "UUID", **kwargs):
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_person_bundle.format(person_id=person_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_person_account_holder_job(person_id: "UUID"):
+async def get_person_account_holder_job(person_id: "UUID", **kwargs):
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_person_account_holder_job.format(person_id=person_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_person_account_job(person_id: "UUID"):
+async def get_person_account_job(person_id: "UUID", **kwargs):
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_person_account_job.format(person_id=person_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_person_bundle_job(person_id: "UUID"):
+async def get_person_bundle_job(person_id: "UUID", **kwargs):
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_person_bundle_job.format(person_id=person_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def create_person_account_holder_job(person_id: "UUID" = None, **data: dict):
+async def create_person_account_holder_job(
+    person_id: "UUID" = None, data: dict = {}, kwargs: dict = {}
+):
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_person_account_holder_job.format(person_id=person_id),
@@ -833,13 +843,15 @@ async def create_person_account_holder_job(person_id: "UUID" = None, **data: dic
                 "proxy": {"account_holder_id": data.get("proxy_ach")},
             }
         },
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def create_person_account_job(person_id: "UUID" = None, **data: dict):
+async def create_person_account_job(
+    person_id: "UUID" = None, data: dict = {}, kwargs: dict = {}
+):
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_person_account_job.format(person_id=person_id),
@@ -851,13 +863,15 @@ async def create_person_account_job(person_id: "UUID" = None, **data: dict):
                 },
             }
         },
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def create_person_bundle_job(person_id: "UUID" = None, **data: dict):
+async def create_person_bundle_job(
+    person_id: "UUID" = None, data: dict = {}, kwargs: dict = {}
+):
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_person_bundle_job.format(person_id=person_id),
@@ -875,8 +889,8 @@ async def create_person_bundle_job(person_id: "UUID" = None, **data: dict):
                 "session_date": data.get("session_date"),
             }
         },
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -886,6 +900,7 @@ async def create_person_payment_instrument_addon(
     payment_instrument_product_code: "str" = None,
     request_ref_id: "str" = None,
     person_type: "str" = None,
+    kwargs: dict = {},
 ):
     client_session = m2p_client_session.get()
     async with client_session.post(
@@ -895,160 +910,164 @@ async def create_person_payment_instrument_addon(
             "request_ref_id": request_ref_id,
             "person_type": person_type,
         },
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def create_card_dispatch(**data: dict):
+async def create_card_dispatch(data: dict, kwargs: dict = {}):
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_workflow_create_card_dispatch,
         json=data,
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def find_card_dispatch(**params: dict):
+async def find_card_dispatch(params: dict, kwargs: dict = {}):
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_workflow_create_card_dispatch,
         params=params,
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_card_dispatch(card_dispatch_id: str):
+async def get_card_dispatch(card_dispatch_id: str, kwargs: dict = {}):
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_workflow_get_card_dispatch.format(card_dispatch_id=card_dispatch_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def check_zipcode(params):
+async def check_zipcode(params, kwargs: dict = {}):
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_workflow_check_zipcode,
-        headers={**headers, "X-Api-Version": "v1"},
+        headers={**kwargs.get("headers", {}), "X-Api-Version": "v1"},
         params=params,
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def create_txn_policy(account_holder_id, card_id, txn_policy_rules):
+async def create_txn_policy(
+    account_holder_id, card_id, txn_policy_rules, kwargs: dict = {}
+):
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_create_txn_policy.format(
             account_holder_id=account_holder_id, card_id=card_id
         ),
-        headers={**headers, "X-Api-Version": "v1"},
+        headers={**kwargs.get("headers", {}), "X-Api-Version": "v1"},
         json=txn_policy_rules,
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_txn_policy(card_id):
+async def get_txn_policy(card_id, kwargs: dict = {}):
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_get_txn_policy.format(card_id=card_id),
-        headers=headers,
-        timeout=timeout,
+        headers=kwargs.get("headers", {}),
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def update_txn_policy(card_id, txn_policy_list):
+async def update_txn_policy(card_id, txn_policy_list, kwargs: dict = {}):
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_update_txn_policy.format(card_id=card_id),
-        headers=headers,
+        headers=kwargs.get("headers", {}),
         json=txn_policy_list,
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_card_policy(card_id, account_holder_id):
+async def get_card_policy(card_id, account_holder_id, kwargs: dict = {}):
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_card_policy,
-        headers=headers,
+        headers=kwargs.get("headers", {}),
         params={"card_id": card_id, "account_holder_id": account_holder_id},
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def set_card_policy(card_id, account_holder_id, rules):
+async def set_card_policy(card_id, account_holder_id, rules, kwargs: dict = {}):
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_card_policy,
-        headers={**headers, "X-API_VERSION": "v1"},
+        headers={**kwargs.get("headers", {}), "X-API_VERSION": "v1"},
         json={
             "card_id": card_id,
             "account_holder_id": account_holder_id,
             "data": rules,
         },
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def generate_otp(mobile_number):
+async def generate_otp(mobile_number, kwargs: dict = {}):
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_account_holder_otp_action,
-        headers={**headers, "X-API_VERSION": "v1"},
+        headers={**kwargs.get("headers", {}), "X-API_VERSION": "v1"},
         json={"action": "GENERATE", "request": {"mobile_number": mobile_number}},
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def validate_otp(mobile_number, session_id, user_response):
+async def validate_otp(mobile_number, session_id, user_response, kwargs: dict = {}):
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_account_holder_otp_action,
-        headers={**headers, "X-API_VERSION": "v1"},
+        headers={**kwargs.get("headers", {}), "X-API_VERSION": "v1"},
         json={
             "action": "VALIDATE",
             "request": {"mobile_number": mobile_number},
             "response": {"user_response": user_response, "session_id": session_id},
         },
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def edit_action_card_dispatch_action(card_dispatch_id, action, attributes):
+async def edit_action_card_dispatch_action(
+    card_dispatch_id, action, attributes, kwargs: dict = {}
+):
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_workflow_get_card_dispatch_edit_action.format(
             card_dispatch_id=card_dispatch_id
         ),
-        headers={**headers, "X-API_VERSION": "v1"},
+        headers={**kwargs.get("headers", {}), "X-API_VERSION": "v1"},
         json={"action": action, "attributes": attributes},
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
 
-async def get_product_inventory():
+async def get_product_inventory(kwargs: dict = {}):
     client_session = m2p_client_session.get()
     async with client_session.get(
         base_url_product_inventory,
-        headers={**headers, "X-API_VERSION": "v1"},
-        timeout=timeout,
+        headers={**kwargs.get("headers", {}), "X-API_VERSION": "v1"},
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -1059,18 +1078,19 @@ async def perform_payment_instrument_dummy_swap(
     ref_id=None,
     next_ref_id=None,
     person_type=None,
+    kwargs: dict = {},
 ):
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_person_payment_instrument_dummy_swap.format(person_id=person_id),
-        headers={**headers, "X-API_VERSION": "v1"},
+        headers={**kwargs.get("headers", {}), "X-API_VERSION": "v1"},
         json={
             "payment_instrument_product_code": payment_instrument_product_code,
             "ref_id": ref_id,
             "next_ref_id": next_ref_id,
             "person_type": person_type,
         },
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
 
@@ -1079,12 +1099,13 @@ async def update_person_account_status(
     person_id: str,
     action: Union[Literal["BLOCK"], Literal["UNBLOCK"]],
     reason: str,
+    kwargs: dict = {},
 ):
     client_session = m2p_client_session.get()
     async with client_session.post(
         base_url_set_person_account_status.format(person_id=person_id),
-        headers={**headers},
+        headers={**kwargs.get("headers", {})},
         json={"action": action, "reason": reason},
-        timeout=timeout,
+        timeout=kwargs.get("timeout", 10),
     ) as response:
         return await process_response(response)
