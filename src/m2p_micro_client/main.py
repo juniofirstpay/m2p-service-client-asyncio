@@ -31,6 +31,7 @@ async def create_account_holder(
     kyc_value: str,
     phone_number: str,
     person_id: uuid = None,
+    **kwargs,
 ) -> Dict:
     data = {
         "first_name": first_name,
@@ -49,39 +50,39 @@ async def create_account_holder(
     dob = valid_data.pop("dob")
     phone_number = "+91" + valid_data.pop("phone_number")
     response = await m2p_service.create_account_holder(
-        **valid_data, phone_number=phone_number, dob=dob.isoformat()
+        **valid_data, phone_number=phone_number, dob=dob.isoformat(), **kwargs
     )
     return response
 
 
-async def get_account_holder(type: str, value: str):
-    response = await m2p_service.get_account_holder(type, value)
+async def get_account_holder(type: str, value: str, **kwargs):
+    response = await m2p_service.get_account_holder(type, value, **kwargs)
     return response
 
 
-async def get_account_holder_via_id(ach_id: str):
-    response = await m2p_service.get_account_holder_via_id(ach_id)
+async def get_account_holder_via_id(ach_id: str, **kwargs):
+    response = await m2p_service.get_account_holder_via_id(ach_id, **kwargs)
     return response
 
 
-async def get_accounts(account_holder_id: str) -> List[Dict]:
-    response = await m2p_service.get_accounts(account_holder_id)
+async def get_accounts(account_holder_id: str, **kwargs) -> List[Dict]:
+    response = await m2p_service.get_accounts(account_holder_id, **kwargs)
     return response
 
 
-async def get_account(account_id: str) -> List[Dict]:
-    response = await m2p_service.get_account(account_id)
+async def get_account(account_id: str, kwargs) -> List[Dict]:
+    response = await m2p_service.get_account(account_id, **kwargs)
     return response
 
 
-async def update_account(account_id: str, status: str) -> List[Dict]:
-    response = await m2p_service.update_account(account_id, status=status)
+async def update_account(account_id: str, status: str, **kwargs) -> List[Dict]:
+    response = await m2p_service.update_account(account_id, status=status, **kwargs)
     return response
 
 
 # Make the
 async def create_account(
-    account_holder_id: str, account_name: str, person_id: uuid = None
+    account_holder_id: str, account_name: str, person_id: uuid = None, **kwargs
 ) -> Dict:
     data = {
         "account_holder_id": account_holder_id,
@@ -91,28 +92,32 @@ async def create_account(
     valid_data = CreateAccountSchema().load(data)
     if valid_data.get("person_id"):
         valid_data["person_id"] = str(valid_data.get("person_id"))
-    (error, response) = await m2p_service.create_account(**valid_data)
+    (error, response) = await m2p_service.create_account(**valid_data, **kwargs)
     if error:
         return error, response
     return (None, response[0])
 
 
-async def get_resources(account_holder_id: str) -> List[Dict]:
-    response = await m2p_service.get_resources(account_holder_id)
+async def get_resources(account_holder_id: str, **kwargs) -> List[Dict]:
+    response = await m2p_service.get_resources(account_holder_id, **kwargs)
     return response
 
 
-async def get_resource(resource_id: str) -> Tuple[Optional[int], Dict]:
-    response = await m2p_service.get_resource(resource_id)
+async def get_resource(resource_id: str, **kwargs) -> Tuple[Optional[int], Dict]:
+    response = await m2p_service.get_resource(resource_id, **kwargs)
     return response
 
 
-async def get_resource_via_account_id(account_id: str) -> Tuple[Optional[int], Dict]:
-    response = await m2p_service.get_resource_via_account_id(account_id)
+async def get_resource_via_account_id(
+    account_id: str, **kwargs
+) -> Tuple[Optional[int], Dict]:
+    response = await m2p_service.get_resource_via_account_id(account_id, **kwargs)
     return response
 
 
-async def create_resource(account_id: str, mobile_number: str, person_id=None) -> Dict:
+async def create_resource(
+    account_id: str, mobile_number: str, person_id=None, **kwargs
+) -> Dict:
 
     data = {
         "account_id": account_id,
@@ -122,44 +127,48 @@ async def create_resource(account_id: str, mobile_number: str, person_id=None) -
     valid_data = CreateResourceSchema().load(data)
     if valid_data.get("person_id"):
         valid_data["person_id"] = str(valid_data.get("person_id"))
-    response = await m2p_service.create_resource(**valid_data)
+    response = await m2p_service.create_resource(**valid_data, **kwargs)
     return response
 
 
-async def get_resource(resource_id: str) -> Dict:
-    response = await m2p_service.get_resource(resource_id)
+async def get_resource(resource_id: str, **kwargs) -> Dict:
+    response = await m2p_service.get_resource(resource_id, **kwargs)
     return response
 
 
 async def update_resource_status(
-    resource_id: str, status: str, description: str
+    resource_id: str, status: str, description: str, **kwargs
 ) -> Dict:
     data = {"status": status, "description": description}
     valid_data = UpdateResourceStatusSchema().load(data)
-    response = await m2p_service.update_resource_status(resource_id, **valid_data)
+    response = await m2p_service.update_resource_status(
+        resource_id, **valid_data, **kwargs
+    )
     return response
 
 
-async def delete_resource(resource_id: str, description: str) -> Dict:
+async def delete_resource(resource_id: str, description: str, **kwargs) -> Dict:
     data = {"status": "DELETED"}
     valid_data = DeleteResourceStatusSchema().load(data)
-    response = await m2p_service.delete_resource_status(resource_id, **valid_data)
+    response = await m2p_service.delete_resource_status(
+        resource_id, **valid_data, **kwargs
+    )
     return response
 
 
 async def update_form_factor(
-    resource_id: str, form_factor_id: str, status: str, description: str
+    resource_id: str, form_factor_id: str, status: str, description: str, **kwargs
 ) -> Dict:
     data = {"status": status, "description": description}
     valid_data = UpdateFormFactorStatusSchema().load(data)
     response = await m2p_service.update_form_factor(
-        resource_id, form_factor_id, **valid_data
+        resource_id, form_factor_id, **valid_data, **kwargs
     )
     return response
 
 
 async def debit_account(
-    txn_id: str, account_id: str, amount: int, remarks: str, attributes: dict
+    txn_id: str, account_id: str, amount: int, remarks: str, attributes: dict, **kwargs
 ):
 
     data = {
@@ -170,12 +179,12 @@ async def debit_account(
         "txn_id": txn_id,
     }
     valid_data = AccountDebitSchema().load(data)
-    response = await m2p_service.account_debit(**valid_data)
+    response = await m2p_service.account_debit(**valid_data, **kwargs)
     return response
 
 
 async def purchase_on_account(
-    txn_id: str, account_id: str, amount: int, remarks: str, attributes: dict
+    txn_id: str, account_id: str, amount: int, remarks: str, attributes: dict, **kwargs
 ):
 
     data = {
@@ -186,12 +195,12 @@ async def purchase_on_account(
         "txn_id": txn_id,
     }
     valid_data = AccountDebitSchema().load(data)
-    response = await m2p_service.account_purchase(**valid_data)
+    response = await m2p_service.account_purchase(**valid_data, **kwargs)
     return response
 
 
 async def fee_on_account(
-    txn_id: str, account_id: str, amount: int, remarks: str, attributes: dict
+    txn_id: str, account_id: str, amount: int, remarks: str, attributes: dict, **kwargs
 ):
 
     data = {
@@ -202,16 +211,12 @@ async def fee_on_account(
         "txn_id": txn_id,
     }
     valid_data = AccountDebitSchema().load(data)
-    response = await m2p_service.account_fee(**valid_data)
+    response = await m2p_service.account_fee(**valid_data, **kwargs)
     return response
 
 
 async def credit_account(
-    txn_id: str,
-    account_id: str,
-    amount: int,
-    remarks: str,
-    attributes: dict,
+    txn_id: str, account_id: str, amount: int, remarks: str, attributes: dict, **kwargs
 ):
 
     data = {
@@ -222,7 +227,7 @@ async def credit_account(
         "txn_id": txn_id,
     }
     valid_data = AccountCreditSchema().load(data)
-    response = await m2p_service.account_credit(**valid_data)
+    response = await m2p_service.account_credit(**valid_data, **kwargs)
     return response
 
 
@@ -233,6 +238,7 @@ async def account_transfer(
     amount: int,
     remarks: str,
     attributes: dict,
+    **kwargs,
 ):
 
     data = {
@@ -244,7 +250,7 @@ async def account_transfer(
         "txn_id": txn_id,
     }
     valid_data = AccountTransferSchema().load(data)
-    response = await m2p_service.account_transfer(**valid_data)
+    response = await m2p_service.account_transfer(**valid_data, **kwargs)
     return response
 
 
@@ -255,6 +261,7 @@ async def account_inter_transfer(
     amount: int,
     remarks: str,
     attributes: dict,
+    **kwargs,
 ):
 
     data = {
@@ -266,16 +273,12 @@ async def account_inter_transfer(
         "txn_id": txn_id,
     }
     valid_data = AccountTransferSchema().load(data)
-    response = await m2p_service.account_inter_transfer(**valid_data)
+    response = await m2p_service.account_inter_transfer(**valid_data, **kwargs)
     return response
 
 
 async def account_wallet_transfer(
-    txn_id: str,
-    account_id: str,
-    amount: int,
-    remarks: str,
-    attributes: dict,
+    txn_id: str, account_id: str, amount: int, remarks: str, attributes: dict, **kwargs
 ):
 
     data = {
@@ -286,149 +289,155 @@ async def account_wallet_transfer(
         "txn_id": txn_id,
     }
     valid_data = AccountWalletTransferSchema().load(data)
-    response = await m2p_service.account_wallet_transfer(**valid_data)
+    response = await m2p_service.account_wallet_transfer(**valid_data, **kwargs)
     return response
 
 
-async def get_txn(txn_id: str):
-    response = await m2p_service.get_txn(txn_id=txn_id)
+async def get_txn(txn_id: str, **kwargs):
+    response = await m2p_service.get_txn(txn_id=txn_id, **kwargs)
     return response
 
 
-async def reverse_txn(txn_id: str, remarks=None):
-    response = await m2p_service.reverse_txn(txn_id=txn_id, remarks=remarks)
+async def reverse_txn(txn_id: str, remarks=None, **kwargs):
+    response = await m2p_service.reverse_txn(txn_id=txn_id, remarks=remarks, **kwargs)
     return response
 
 
-async def get_balance(account_id: str):
-    response = await m2p_service.get_balance(account_id=account_id)
+async def get_balance(account_id: str, **kwargs):
+    response = await m2p_service.get_balance(account_id=account_id, **kwargs)
     return response
 
 
-async def get_funding_account_balance():
-    return await m2p_service.get_funding_account_balance()
+async def get_funding_account_balance(**kwargs):
+    return await m2p_service.get_funding_account_balance(**kwargs)
 
 
-async def get_credit_limit(account_id: str):
-    response = await m2p_service.get_credit_limit(
-        account_id=account_id, timeout=(3.05, 3.05)
-    )
+async def get_credit_limit(account_id: str, **kwargs):
+    response = await m2p_service.get_credit_limit(account_id=account_id, **kwargs)
     return response
 
 
-async def get_debit_limit(account_id: str):
-    response = await m2p_service.get_debit_limit(account_id=account_id)
+async def get_debit_limit(account_id: str, **kwargs):
+    response = await m2p_service.get_debit_limit(account_id=account_id, **kwargs)
     return response
 
 
-async def get_balance_accounts(account_holder_id: str):
+async def get_balance_accounts(account_holder_id: str, **kwargs):
     response = await m2p_service.get_balance_accounts(
-        account_holder_id=account_holder_id
+        account_holder_id=account_holder_id, **kwargs
     )
     return response
 
 
-async def get_account_holder_token(account_holder_id: str):
+async def get_account_holder_token(account_holder_id: str, **kwargs):
     response = await m2p_service.get_account_holder_token(
-        account_holder_id=account_holder_id
+        account_holder_id=account_holder_id, **kwargs
     )
     return response
 
 
-async def get_account_holder_kyc_token(account_holder_id: str):
+async def get_account_holder_kyc_token(account_holder_id: str, **kwargs):
     response = await m2p_service.get_account_holder_kyc_token(
-        account_holder_id=account_holder_id
+        account_holder_id=account_holder_id, **kwargs
     )
     return response
 
 
-async def process_account_holder_kyc_upgrade(account_holder_id: str):
+async def process_account_holder_kyc_upgrade(account_holder_id: str, **kwargs):
     response = await m2p_service.process_account_holder_kyc_upgrade(
-        account_holder_id=account_holder_id
+        account_holder_id=account_holder_id, **kwargs
     )
     return response
 
 
-async def get_account_holder_kyc_status(account_holder_id: str):
+async def get_account_holder_kyc_status(account_holder_id: str, **kwargs):
     response = await m2p_service.get_account_holder_kyc_status(
-        account_holder_id=account_holder_id
+        account_holder_id=account_holder_id, **kwargs
     )
     return response
 
 
-async def get_resource_txns(resource_id: str):
-    response = await m2p_service.fetch_resource_transactions(resource_id=resource_id)
+async def get_resource_txns(resource_id: str, **kwargs):
+    response = await m2p_service.fetch_resource_transactions(
+        resource_id=resource_id, **kwargs
+    )
     return response
 
 
-async def create_phone_number(account_id: str, phone_number: str):
+async def create_phone_number(account_id: str, phone_number: str, **kwargs):
     response = await m2p_service.create_phone_number(
-        account_id=account_id, phone_number=phone_number
+        account_id=account_id, phone_number=phone_number, **kwargs
     )
     return response
 
 
-async def delete_phone_number(account_id: str):
-    response = await m2p_service.delete_phone_number(account_id=account_id)
+async def delete_phone_number(account_id: str, **kwargs):
+    response = await m2p_service.delete_phone_number(account_id=account_id, **kwargs)
     return response
 
 
-async def get_account_transactions(account_id: str, params: Optional[Dict] = None):
+async def get_account_transactions(
+    account_id: str, params: Optional[Dict] = None, **kwargs
+):
     response = await m2p_service.get_account_transactions(
-        account_id=account_id, params=params
+        account_id=account_id, params=params, **kwargs
     )
     return response
 
 
-async def get_account_transactions_v2(account_id: str, params: Optional[Dict] = None):
+async def get_account_transactions_v2(
+    account_id: str, params: Optional[Dict] = None, **kwargs
+):
     response = await m2p_service.get_account_transactions_v2(
-        account_id=account_id, params=params
+        account_id=account_id, params=params, **kwargs
     )
     return response
 
 
-async def get_person_account_transaction(person_id: str, params: Optional[Dict] = None):
+async def get_person_account_transaction(
+    person_id: str, params: Optional[Dict] = None, **kwargs
+):
     return await m2p_service.get_person_account_transactions(
-        person_id=person_id, params=params
+        person_id=person_id, params=params, **kwargs
     )
 
 
-async def create_card(account_id: str):
-    response = await m2p_service.create_card(account_id=account_id)
+async def create_card(account_id: str, **kwargs):
+    response = await m2p_service.create_card(account_id=account_id, **kwargs)
     return response
 
 
-async def delete_card(account_id: str):
-    response = await m2p_service.delete_card(account_id=account_id)
+async def delete_card(account_id: str, **kwargs):
+    response = await m2p_service.delete_card(account_id=account_id, **kwargs)
     return response
 
 
-async def get_card(card_id: str):
-    return await m2p_service.get_card(card_id=card_id)
+async def get_card(card_id: str, **kwargs):
+    return await m2p_service.get_card(card_id=card_id, **kwargs)
 
 
-async def get_card_view(card_id: str):
-    return await m2p_service.get_card_view(card_id=card_id)
+async def get_card_view(card_id: str, **kwargs):
+    return await m2p_service.get_card_view(card_id=card_id, **kwargs)
 
 
-async def get_card_set_pin(card_id: str):
-    return await m2p_service.get_card_set_pin(card_id=card_id)
+async def get_card_set_pin(card_id: str, **kwargs):
+    return await m2p_service.get_card_set_pin(card_id=card_id, **kwargs)
 
 
-async def get_card_status(card_id):
-    response = await m2p_service.get_card_status(card_id=card_id)
+async def get_card_status(card_id, **kwargs):
+    response = await m2p_service.get_card_status(card_id=card_id, **kwargs)
     return response
 
 
-async def update_card_status(card_id, status, reason=None):
+async def update_card_status(card_id, status, reason=None, **kwargs):
     response = await m2p_service.update_card_status(
-        card_id=card_id, status=status, reason=reason
+        card_id=card_id, status=status, reason=reason, **kwargs
     )
     return response
 
 
-async def fetch_txn_limit(account_id: str):
-    response = await m2p_service.fetch_txn_limit(account_id=account_id)
+async def fetch_txn_limit(account_id: str, **kwargs):
+    response = await m2p_service.fetch_txn_limit(account_id=account_id, **kwargs)
     return response
 
 
@@ -442,6 +451,7 @@ async def create_card_dispatch(
     delivery_address: dict,
     card_attributes: dict,
     dispatch_status: str = None,
+    **kwargs,
 ):
     from .schema import CreateCardDispatchSchema
 
@@ -466,7 +476,7 @@ async def create_card_dispatch(
     valid_data["customer"]["person_id"] = str(valid_data["customer"]["person_id"])
     valid_data["receiver"]["person_id"] = str(valid_data["receiver"]["person_id"])
 
-    return await m2p_service.create_card_dispatch(**valid_data)
+    return await m2p_service.create_card_dispatch(data={**valid_data}, **kwargs)
 
 
 async def find_card_dispatch(
@@ -474,29 +484,33 @@ async def find_card_dispatch(
     card_form_factor_id: str,
     secondary_person_id: str = None,
     realtime=False,
+    **kwargs,
 ):
     return await m2p_service.find_card_dispatch(
-        person_id=person_id,
-        card_form_factor_id=card_form_factor_id,
-        secondary_person_id=secondary_person_id,
-        realtime=realtime,
+        params={
+            "person_id": person_id,
+            "card_form_factor_id": card_form_factor_id,
+            "secondary_person_id": secondary_person_id,
+            "realtime": realtime,
+        },
+        **kwargs,
     )
 
 
-async def get_card_dispatch(card_dispatch_id: str):
-    return await m2p_service.get_card_dispatch(card_dispatch_id)
+async def get_card_dispatch(card_dispatch_id: str, **kwargs):
+    return await m2p_service.get_card_dispatch(card_dispatch_id, **kwargs)
 
 
 async def edit_card_dispatch_action(
-    card_dispatch_id: str, action: str, attributes: dict
+    card_dispatch_id: str, action: str, attributes: dict, **kwargs
 ):
     return await m2p_service.edit_action_card_dispatch_action(
-        card_dispatch_id, action, attributes
+        card_dispatch_id, action, attributes, **kwargs
     )
 
 
-async def check_zipcode(zipcode: str):
-    return await m2p_service.check_zipcode(params={"zipcode": zipcode})
+async def check_zipcode(zipcode: str, **kwargs):
+    return await m2p_service.check_zipcode(params={"zipcode": zipcode}, **kwargs)
 
 
 # async def reissue_card_form_factor(
@@ -546,34 +560,36 @@ async def check_zipcode(zipcode: str):
 #     )
 
 
-async def get_person_account_holder(person_id: "UUID"):
-    return await m2p_service.get_person_account_holder(person_id)
+async def get_person_account_holder(person_id: "UUID", **kwargs):
+    return await m2p_service.get_person_account_holder(person_id, **kwargs)
 
 
-async def get_person_account(person_id: "UUID"):
-    return await m2p_service.get_person_account(person_id)
+async def get_person_account(person_id: "UUID", **kwargs):
+    return await m2p_service.get_person_account(person_id, **kwargs)
 
 
-async def get_person_account_details(person_id: "UUID", account_id: str = None):
+async def get_person_account_details(
+    person_id: "UUID", account_id: str = None, **kwargs
+):
     return await m2p_service.get_person_account_details(
-        person_id, account_id=account_id
+        person_id, account_id=account_id, **kwargs
     )
 
 
-async def get_person_bundle(person_id: "UUID"):
-    return await m2p_service.get_person_bundle(person_id)
+async def get_person_bundle(person_id: "UUID", **kwargs):
+    return await m2p_service.get_person_bundle(person_id, **kwargs)
 
 
-async def get_person_account_holder_job(person_id: "UUID"):
-    return await m2p_service.get_person_account_holder_job(person_id)
+async def get_person_account_holder_job(person_id: "UUID", **kwargs):
+    return await m2p_service.get_person_account_holder_job(person_id, **kwargs)
 
 
-async def get_person_account_job(person_id: "UUID"):
-    return await m2p_service.get_person_account_job(person_id)
+async def get_person_account_job(person_id: "UUID", **kwargs):
+    return await m2p_service.get_person_account_job(person_id, **kwargs)
 
 
-async def get_person_bundle_job(person_id: "UUID"):
-    return await m2p_service.get_person_bundle_job(person_id)
+async def get_person_bundle_job(person_id: "UUID", **kwargs):
+    return await m2p_service.get_person_bundle_job(person_id, **kwargs)
 
 
 async def create_person_account_holder_job(
@@ -589,6 +605,7 @@ async def create_person_account_holder_job(
     session_id: "Optional[str]" = None,
     session_date: "Optional[datetime]" = None,
     proxy_ach: str = None,
+    **kwargs,
 ):
 
     valid_data = PersonAccountHolderSchema().load(
@@ -608,11 +625,11 @@ async def create_person_account_holder_job(
         }
     )
 
-    return await m2p_service.create_person_account_holder_job(**valid_data)
+    return await m2p_service.create_person_account_holder_job(**valid_data, **kwargs)
 
 
 async def create_person_account_job(
-    person_id: "UUID", account_holder_id: str, account_name: str
+    person_id: "UUID", account_holder_id: str, account_name: str, **kwargs
 ):
     valid_data = PersonAccountSchema().load(
         {
@@ -621,7 +638,7 @@ async def create_person_account_job(
             "name": account_name,
         }
     )
-    return await m2p_service.create_person_account_job(**valid_data)
+    return await m2p_service.create_person_account_job(**valid_data, **kwargs)
 
 
 async def create_person_bundle_job(
@@ -632,6 +649,7 @@ async def create_person_bundle_job(
     account_id: Optional[str] = None,
     session_id: "Optional[str]" = None,
     session_date: "Optional[datetime]" = None,
+    **kwargs,
 ):
     valid_data = PersonBundleSchema().load(
         {
@@ -644,7 +662,7 @@ async def create_person_bundle_job(
             "session_date": session_date,
         }
     )
-    return await m2p_service.create_person_bundle_job(**valid_data)
+    return await m2p_service.create_person_bundle_job(**valid_data, **kwargs)
 
 
 async def create_person_payment_instrument_addon(
@@ -652,46 +670,53 @@ async def create_person_payment_instrument_addon(
     payment_instrument_product_code: "str",
     request_ref_id,
     person_type: "str",
+    **kwargs,
 ):
     return await m2p_service.create_person_payment_instrument_addon(
-        person_id, payment_instrument_product_code, request_ref_id, person_type
+        person_id,
+        payment_instrument_product_code,
+        request_ref_id,
+        person_type,
+        **kwargs,
     )
 
 
 async def create_txn_policy(
-    account_holder_id: uuid, card_id: uuid, txn_policy_rules: list
+    account_holder_id: uuid, card_id: uuid, txn_policy_rules: list, **kwargs
 ):
     return await m2p_service.create_txn_policy(
-        account_holder_id, card_id, txn_policy_rules
+        account_holder_id, card_id, txn_policy_rules, **kwargs
     )
 
 
-async def get_txn_policy(card_id: uuid):
-    return await m2p_service.get_txn_policy(card_id)
+async def get_txn_policy(card_id: uuid, **kwargs):
+    return await m2p_service.get_txn_policy(card_id, **kwargs)
 
 
-async def update_txn_policy(card_id: uuid, txn_policy_list: list):
-    return await m2p_service.update_txn_policy(card_id, txn_policy_list)
+async def update_txn_policy(card_id: uuid, txn_policy_list: list, **kwargs):
+    return await m2p_service.update_txn_policy(card_id, txn_policy_list, **kwargs)
 
 
-async def get_card_policy(card_id: str, account_holder_id: str):
-    return await m2p_service.get_card_policy(card_id, account_holder_id)
+async def get_card_policy(card_id: str, account_holder_id: str, **kwargs):
+    return await m2p_service.get_card_policy(card_id, account_holder_id, **kwargs)
 
 
-async def set_card_policy(card_id: str, account_holder_id: str, rules):
-    return await m2p_service.set_card_policy(card_id, account_holder_id, rules)
+async def set_card_policy(card_id: str, account_holder_id: str, rules, **kwargs):
+    return await m2p_service.set_card_policy(
+        card_id, account_holder_id, rules, **kwargs
+    )
 
 
-async def generate_otp(mobile_number: str):
-    return await m2p_service.generate_otp(mobile_number)
+async def generate_otp(mobile_number: str, **kwargs):
+    return await m2p_service.generate_otp(mobile_number, **kwargs)
 
 
-async def validate_otp(mobile_number: str, session_id: str, otp: str):
-    return await m2p_service.validate_otp(mobile_number, session_id, otp)
+async def validate_otp(mobile_number: str, session_id: str, otp: str, **kwargs):
+    return await m2p_service.validate_otp(mobile_number, session_id, otp, **kwargs)
 
 
-async def get_product_inventory():
-    return await m2p_service.get_product_inventory()
+async def get_product_inventory(**kwargs):
+    return await m2p_service.get_product_inventory(**kwargs)
 
 
 async def perform_person_payment_instrument_dummy_swap(
@@ -700,6 +725,7 @@ async def perform_person_payment_instrument_dummy_swap(
     ref_id: "str",
     next_ref_id: "str",
     person_type: "str",
+    **kwargs,
 ):
     valid_data = PersonDummySwapPaymentInstrumentSchema().load(
         {
@@ -710,12 +736,17 @@ async def perform_person_payment_instrument_dummy_swap(
             "person_type": person_type,
         }
     )
-    return await m2p_service.perform_payment_instrument_dummy_swap(**valid_data)
+    return await m2p_service.perform_payment_instrument_dummy_swap(
+        **valid_data, **kwargs
+    )
 
 
 async def update_person_account_status(
     person_id: str,
     action: Union[Literal["BLOCK"], Literal["UNBLOCK"]],
     reason: str,
+    **kwargs,
 ):
-    return await m2p_service.update_person_account_status(person_id, action, reason)
+    return await m2p_service.update_person_account_status(
+        person_id, action, reason, **kwargs
+    )
