@@ -1,4 +1,4 @@
-from .service import configure as configure_http_client, m2p_client_session
+from .service import configure_session as configure_http_client, m2p_client_session
 
 
 async def configure(base_url):
