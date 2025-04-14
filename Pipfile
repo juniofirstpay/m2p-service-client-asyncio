@@ -5,10 +5,10 @@ name = "pypi"
 
 [packages]
 aiohttp = "*"
-build = "*"
 
 [dev-packages]
 black = "*"
+build = "*"
 
 [requires]
 python_version = "3.11"

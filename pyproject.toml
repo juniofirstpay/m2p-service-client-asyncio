@@ -20,7 +20,10 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies=[]
+dependencies=[
+  "marsmallow",
+  "aiohttp",
+]
 
 [tool.pytest.ini_options]
 addopts = "-rSA"
