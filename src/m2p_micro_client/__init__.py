@@ -9,4 +9,4 @@ async def configure(base_url):
         await session.close()
         m2p_client_session.set(None)
 
-    return clean()
+    return clean
