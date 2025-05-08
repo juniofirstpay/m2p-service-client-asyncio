@@ -156,10 +156,12 @@ async def process_response(response: aiohttp.ClientResponse):
         return (None, await response.json())
     else:
         try:
-            response.raise_for_status()
-            return (response.status, await response.json())
-        except:
-            return (response.status, response.text)
+            error_obj = await response.json()
+            if isinstance(error_obj, dict) and "error" in error_obj:
+                error_obj = error_obj["error"]
+        except aiohttp.ContentTypeError:
+            error_obj = await response.text()
+        return (response.status, error_obj)
 
 
 async def create_account_holder(*args, **kwargs):
