@@ -920,7 +920,7 @@ async def create_person_account_holder_job(person_id: "UUID" = None, **kwargs):
     async with client_session.post(
         base_url_person_account_holder_job.format(person_id=person_id),
         json={
-            "attribute": {
+            "attributes": {
                 "kyc": {**kwargs, "dob": kwargs.get("dob").strftime("%Y-%m-%d")},
                 "proxy": {"account_holder_id": kwargs.get("proxy_ach")},
             }
