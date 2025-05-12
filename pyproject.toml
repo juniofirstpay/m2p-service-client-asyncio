@@ -8,7 +8,7 @@ include = ["m2p_micro_client"]
 
 [project]
 name = "m2p-micro-client"
-version = "0.0.19"
+version = "0.0.20"
 authors = [
   { name="Nirbhay Gupta", email="nirbhay.gupta@junio.in" },
 ]
