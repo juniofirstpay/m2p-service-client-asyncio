@@ -99,7 +99,7 @@ class PersonAccountHolderSchema(Schema):
         required=True,
         validate=validate.OneOf(["PAN", "DRIVING_LICENSE", "VOTER_ID", "PASSPORT"]),
     )
-    auth_data = fields.String(required=True, min=5)
+    auth_data = fields.String(required=True)
     proxy_ach = fields.String(required=False, allow_none=True)
     session_id = fields.String(required=False, allow_none=True)
     session_date = fields.String(required=False, allow_none=True)
